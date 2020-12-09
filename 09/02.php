@@ -9,22 +9,17 @@ function parse_input($filename)
     return $data;
 }
 
-
 function valid($data, $sum, $start, $end) {
-    $valid = false;
     for ($j = $start; $j < $end; $j++) {
         for ($k = $start; $k < $end; $k++) {
-            if ($k != $j && $sum == $data[$j] + $data[$k]) {
-                $valid = true;
-            }
+            if ($k != $j && $sum == $data[$j] + $data[$k])
+                return true;
         }
     }
-    return $valid;
+    return false;
 }
 
-
-function part1($data, $preamble) {
-    $length = count($data);
+function part1($data, $length, $preamble) {
     for ($i = $preamble; $i < $length; $i++) {
         if (!valid($data, $data[$i],$i - $preamble, $i))
             return $data[$i];
@@ -32,25 +27,28 @@ function part1($data, $preamble) {
     return null;
 }
 
-
-function part2($data, $sum) {
-    $length = count($data);
-    for ($i = 0; $i < $length; $i++) {
-        $set = array();
-        for ($j = $i; $j < $length; $j++) {
-            array_push($set,$data[$j]);
-            if (array_sum($set) == $sum)
-                return (min($set) + max($set));
+function part2($data, $length, $sum) {
+    $sum1 = 0;
+    $rm_next = 0;
+    for ($i=0; $i<$length; $i++) {
+        $sum1 += $data[$i];
+        while ($sum1 > $sum) {
+            $sum1 -= $data[$rm_next];
+            $rm_next++;
+        }
+        if ($sum1 == $sum) {
+            $arr = array_slice($data,$rm_next, $i - $rm_next + 1);
+            return min($arr) + max($arr);
         }
     }
     return null;
 }
 
-
 $data = parse_input("input.txt");
 $preamble = 25;
-$part1 = part1($data, $preamble);
-$part2 = part2($data, $part1);
+$length = count($data);
+$part1 = part1($data, $length, $preamble);
+$part2 = part2($data, $length, $part1);
 
 echo "part1: " . $part1 . "\n";
 echo "part2: " . $part2 . "\n";
