@@ -11,10 +11,9 @@ function parse_input($filename)
 
 function valid($data, $sum, $start, $end) {
     for ($j = $start; $j < $end; $j++) {
-        for ($k = $start; $k < $end; $k++) {
-            if ($k != $j && $sum == $data[$j] + $data[$k])
-                return true;
-        }
+        $k = array_search($sum - $data[$j], array_slice($data, $start, $end - $start));
+        if ($k != null && $k != $j)
+            return true;
     }
     return false;
 }
